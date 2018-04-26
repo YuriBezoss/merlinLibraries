@@ -1,9 +1,5 @@
-//
-// Created by Sparrow on 3/29/2018.
-//
-
-#ifndef FARU_SIMULATION_MANAGER_ABSTRACT_H
-#define FARU_SIMULATION_MANAGER_ABSTRACT_H
+#ifndef FiltersAndPipesManager_H
+#define FiltersAndPipesManager_H
 
 
 #include <Schedulable.h>
@@ -54,4 +50,4 @@ protected:
 };
 
 
-#endif //FARU_SIMULATION_MANAGER_ABSTRACT_H
+#endif //FiltersAndPipesManager_H

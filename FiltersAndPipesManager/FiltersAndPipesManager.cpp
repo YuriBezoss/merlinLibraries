@@ -1,7 +1,3 @@
-//
-// Created by Sparrow on 3/29/2018.
-//
-
 #include <Logger.h>
 #include <cstdio>
 #include "FiltersAndPipesManager.h"

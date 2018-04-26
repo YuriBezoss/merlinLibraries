@@ -1,16 +1,17 @@
-#ifndef Action_tilted_H
-#define Action_tilted_H
+#ifndef Action_demoMerlin_H
+#define Action_demoMerlin_H
+
 
 #include <Filter.h>
 #include <Indicator_led.h>
 
-class Action_tilted : public Filter {
+class Action_demoMerlin : public Filter {
 ///////////////////////////////////////////////////////////////////////////
 // Filter
 ///////////////////////////////////////////////////////////////////////////
 public:
     enum InputDataTypes {
-        InTiltingAngle, NUM_INPUT_TYPES
+        InStartCmdReceived, InTiltingAngle, InMotion, NUM_INPUT_TYPES
     };
 
     enum OutputDataTypes {
@@ -27,7 +28,9 @@ public:
 
     void setInputItem(uint8_t itemId, FilterItem *item) override {
         switch (itemId) {
+            case InStartCmdReceived: inStartCmdReceived = (FilterItem_bool*) item; break;
             case InTiltingAngle: inTiltingAngle = (FilterItem_float*) item; break;
+            case InMotion: inMotion = (FilterItem_bool*) item; break;
             default: break;
         }
     };
@@ -39,22 +42,27 @@ public:
     void update(float deltaTime) override;
 
 protected:
-
+    FilterItem_bool *inStartCmdReceived = nullptr;
     FilterItem_float *inTiltingAngle = nullptr;
+    FilterItem_bool *inMotion = nullptr;
 
 ///////////////////////////////////////////////////////////////////////////
 // Custom
 ///////////////////////////////////////////////////////////////////////////
 public:
 
-    explicit Action_tilted(Indicator_led *led) {
-        Action_tilted::led = led;
+    explicit Action_demoMerlin(Indicator_led *tiltingLed, Indicator_led *motionLed) {
+        Action_demoMerlin::tiltingLed = tiltingLed;
+        Action_demoMerlin::motionLed = motionLed;
     }
 
 protected:
 
-    Indicator_led *led = nullptr;
+    bool actionRunning = true;
+    Indicator_led *tiltingLed = nullptr;
+    Indicator_led *motionLed = nullptr;
 
 };
 
-#endif //Action_tilted_H
+
+#endif //Action_demoMerlin_H
