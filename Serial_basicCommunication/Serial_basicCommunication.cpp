@@ -4,6 +4,7 @@ bool Serial_basicCommunication::readoutRxBuffer() {
 
     newMessageAvailable = false;
 
+    // if new data is available we transfer the data to the message struct
     if(dataAvailable()) {
         while(dataAvailable()) {
             if(message.msgLength < message.MSG_LENGTH_MAX) {
@@ -17,11 +18,11 @@ bool Serial_basicCommunication::readoutRxBuffer() {
             }
         }
         timer->startClock();
+
     } else {
 
         // Transferring one byte via uart requires 10 bits (incl. start and stop bit). So we wait at least 12 bits or 12
         // bauds. If no data was received within this time, we can assume that the message transfer has finished.
-
         float baudrate;
         if(useUart) {
             baudrate = uart->getBaudrate();

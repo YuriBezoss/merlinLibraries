@@ -6,6 +6,10 @@
 #include <Filter.h>
 #include <Loggable.h>
 
+
+/**
+ * Sensor_ins is a wrapper for Hardware_inertialSensor in order to use it within the Filters & Pipes Manager.
+ */
 class Sensor_ins: public Filter, public Loggable {
 ///////////////////////////////////////////////////////////////////////////
 // Loggable

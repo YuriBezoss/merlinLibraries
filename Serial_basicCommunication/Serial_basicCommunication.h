@@ -1,14 +1,21 @@
-#ifndef Serial_simpleReader_H
-#define Serial_simpleReader_H
+#ifndef Serial_basicCommunication_H
+#define Serial_basicCommunication_H
 
 #include <Hardware_uart.h>
 #include <Hardware_usbSerial.h>
 #include <Timer.h>
 
+/**
+ * Handles serial communication. Supports uart and usbSerial.
+ *
+ */
 class Serial_basicCommunication {
 
 public:
 
+    /**
+     * Message struct is used to temporarily store a message received on the rx line or to send a message via the tx line
+     */
     struct Message {
         static const uint16_t MSG_LENGTH_MAX = 500;
         uint8_t msg[MSG_LENGTH_MAX] = {};
@@ -33,10 +40,21 @@ public:
         useUart = false;
     }
 
+    /**
+     * Read out rx buffer. Returns true if new message has been received and no additional data has been sent within a certain
+     * amount of time. That means that the data transfer has finished.
+     * @return
+     */
     bool readoutRxBuffer();
 
+    /**
+     * @return if a new rx message is available
+     */
     bool isNewMessageAvailable();
 
+    /**
+     * @return newest rx message
+     */
     Message getMessage();
 
     void sendMessage(Message message);
@@ -57,4 +75,4 @@ protected:
 };
 
 
-#endif //Serial_simpleReader_H
+#endif //Serial_basicCommunication_H

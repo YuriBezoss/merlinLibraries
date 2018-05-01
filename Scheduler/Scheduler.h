@@ -7,6 +7,11 @@
 #include <Schedulable.h>
 #include <Loggable.h>
 
+/**
+ * Scheduler provides the heartbeat for the Merlin framework. Its update-function is continuously called by the main
+ * while-loop. Every cyclePeriod seconds it calls all update-functions of the tasks that were added (addTask()).
+ * Thereby, the tasks are update regularly:
+ */
 class Scheduler: public Loggable {
 ///////////////////////////////////////////////////////////////////////////
 // Loggable
@@ -27,11 +32,19 @@ public:
 ///////////////////////////////////////////////////////////////////////////
 public:
 
+    /**
+     * @param hardwareTimer
+     * @param cyclePeriod defines the heartbeat period in s of the Merlin framework
+     */
 	Scheduler(Hardware_timer *hardwareTimer, float cyclePeriod) : cycleTimer(Timer(hardwareTimer)), taskTimer(Timer(hardwareTimer)) {
 		Scheduler::cyclePeriod = cyclePeriod;
 		cycleTimer.startClock();
 	}
 
+    /**
+     * Schedulable task are added
+     * @param schedulable
+     */
     void addTask(Schedulable *schedulable);
 
 	void update();
@@ -53,8 +66,8 @@ protected:
 	float cyclePeriod; // in s
 
     Schedulable *schedulables[SCHEDULABLES_MAX] = {}; // array of elements that are executed when update is called
-    float taskCycleTimes[SCHEDULABLES_MAX] = {}; // array, tells you how often the individual schedulables are executed
-    float taskExecutionTimes[SCHEDULABLES_MAX] = {}; // array storing execution time of each task
+    float taskDeltaTimes[SCHEDULABLES_MAX] = {}; // holds the delta time for each task
+    float taskExecutionTimes[SCHEDULABLES_MAX] = {}; // array storing the execution time of each task
 
     uint16_t numTasks = 0;
 	uint32_t loopCounter = 0;
