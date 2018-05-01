@@ -4,6 +4,9 @@
 
 #include <Scheduler.h>
 
+/**
+ * Builder interface
+ */
 class Builder {
 
 public:

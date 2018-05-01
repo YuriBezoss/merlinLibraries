@@ -5,6 +5,14 @@
 #include <Filter.h>
 #include <Indicator_led.h>
 
+/**
+ * Action library used for the merlin demo.
+ * It performs three task:
+ *      1. If motion is detected, the motion led is switched on.
+ *      2. If the tilting angle is larger than 45 deg, the tilting led is switched on.
+ *      3. The motion detection and the tilting angle detection can be switched off by the serial command 'cmd:stop'.
+ *         To restart them use 'cmd:start'.
+ */
 class Action_demoMerlin : public Filter {
 ///////////////////////////////////////////////////////////////////////////
 // Filter

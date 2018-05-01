@@ -5,6 +5,10 @@
 #include <Filter.h>
 #include <Loggable.h>
 
+
+/**
+ * This library uses gyroscope and accelerometer data provided by an inertial sensor to determine whether the sensor is moved or not.
+ */
 class Filter_motionDetection_ins: public Filter, public Loggable {
 ///////////////////////////////////////////////////////////////////////////
 // Loggable

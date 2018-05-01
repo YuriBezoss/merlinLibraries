@@ -5,6 +5,10 @@
 #include <Filter.h>
 #include <Indicator_led.h>
 
+
+/**
+ * The hearbeat library changes the state of an led every time its update function is called.
+ */
 class Action_heartbeat : public Filter {
 ///////////////////////////////////////////////////////////////////////////
 // Filter

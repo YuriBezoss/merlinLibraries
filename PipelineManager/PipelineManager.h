@@ -1,18 +1,22 @@
-#ifndef FiltersAndPipesManager_H
-#define FiltersAndPipesManager_H
+#ifndef PipelineManager_H
+#define PipelineManager_H
 
 
 #include <Schedulable.h>
 #include <Filter.h>
 
-class FiltersAndPipesManager: public Schedulable {
+/**
+ * The pipes and filters pattern is used link sensors, filters, remoteInputs and actions
+ * (see http://www.dossier-andreas.net/software_architecture/pipe_and_filter.html)
+ */
+class PipelineManager: public Schedulable {
 ///////////////////////////////////////////////////////////////////////////
 // Custom
 ///////////////////////////////////////////////////////////////////////////
 public:
 
-    explicit FiltersAndPipesManager(uint8_t schedulingPeriod) {
-        FiltersAndPipesManager::schedulingPeriod = schedulingPeriod;
+    explicit PipelineManager(uint8_t schedulingPeriod) {
+        PipelineManager::schedulingPeriod = schedulingPeriod;
     }
 
     void addFilter(uint16_t id, Filter *filter, bool ignoreInputItems = false);
@@ -50,4 +54,4 @@ protected:
 };
 
 
-#endif //FiltersAndPipesManager_H
+#endif //PipelineManager_H

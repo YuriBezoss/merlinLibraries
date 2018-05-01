@@ -16,37 +16,17 @@
 ///////////////////////////////////////////////////////////////////////////
 // Loop times
 ///////////////////////////////////////////////////////////////////////////
-#define REMOTE_MANAGER_INTERVAL   1
 #define FILTER_MANAGER_INTERVAL   1
-#define ACTION_MANAGER_INTERVAL   1
 #define LOGGER_SCHEDULER_INTERVAL 1
 
 ///////////////////////////////////////////////////////////////////////////
 // PRINT DATA
 ///////////////////////////////////////////////////////////////////////////
 #define PRINT_SCHEDULER              1
-#define PRINT_REMOTE_MANAGER_OUTPUT  1
-
 #define PRINT_SENSOR_INS             1
 #define PRINT_MOTION_DETECTION       1
 #define PRINT_TILTING_ANGLE          1
-#define PRINT_FILTER_MANAGER_OUTPUT  0
 
-#define PRINT_ACTION_MANAGER_OUTPUT  1
-
-#define PRINT_IR_SENSOR_ARRAY_PROCESSING 1
-
-///////////////////////////////////////////////////////////////////////////
-// SERIAL CMDS
-///////////////////////////////////////////////////////////////////////////
-#define SERIAL_CMD_LENGTH 201
-#define SERIAL_CMD_PREFIX "cmd:"
-#define SERIAL_CMD_PREFIX_LENGTH 4
-///////////////////////////////////////////////////////////////////////////
-// PARAMETERS
-///////////////////////////////////////////////////////////////////////////
-#define NUM_LEDS 64
-#define INFRARED_SENSOR_ARRAY_REFRESH_RATE 16
 
 Scheduler *Builder_demoMerlin::build() {
 
@@ -61,7 +41,7 @@ Scheduler *Builder_demoMerlin::build() {
     loggingManager->addLoggable(scheduler, PRINT_SCHEDULER);
 
     // filters and pips
-    FiltersAndPipesManager *filtersManager = setupFiltersManager();
+    PipelineManager *filtersManager = setupFiltersManager();
 
     // add tasks
     scheduler->addTask(filtersManager);
@@ -71,28 +51,10 @@ Scheduler *Builder_demoMerlin::build() {
 
 
 ///////////////////////////////////////////////////////////////////////////
-// RemoteManager
-///////////////////////////////////////////////////////////////////////////
-//FiltersAndPipesManager *Builder_demoMerlin_ardu::setupRemoteManager() {
-//    auto *remoteManager = new FiltersAndPipesManager(REMOTE_MANAGER_INTERVAL);
-//
-//    // serial cmds
-//    auto *serialCmdsDecoder = new Remote_serialCmdsDecoder_demoMerlin(serialBasicCommunication);
-//    remoteManager->addFilter(SerialCmdsDecoder, serialCmdsDecoder);
-//
-////    // decoder
-////    auto *decoder = new Remote_serialCmdsDecoder_merlinDemo(NUM_LEDS);
-////    remoteManager->addFilter(Decoder, decoder);
-////    remoteManager->addPipe(SerialCmds, Remote_serialCmds::OutSerialCmd, Decoder, Remote_serialCmdsDecoder_merlinDemo::InSerialCmd);
-////
-
-//}
-
-///////////////////////////////////////////////////////////////////////////
 // FilterManager
 ///////////////////////////////////////////////////////////////////////////
-FiltersAndPipesManager *Builder_demoMerlin::setupFiltersManager() {
-    auto *filtersManager = new FiltersAndPipesManager(FILTER_MANAGER_INTERVAL);
+PipelineManager *Builder_demoMerlin::setupFiltersManager() {
+    auto *filtersManager = new PipelineManager(FILTER_MANAGER_INTERVAL);
 
     ///////////////////////////////////////////////////////////////////////////
     // REMOTE CONTROL
@@ -100,7 +62,6 @@ FiltersAndPipesManager *Builder_demoMerlin::setupFiltersManager() {
     // serial cmds
     auto *serialCmdsDecoder = new Remote_serialCmdsDecoder_demoMerlin(serialBasicCommunication);
     filtersManager->addFilter(SerialCmdsDecoder, serialCmdsDecoder);
-
 
     ///////////////////////////////////////////////////////////////////////////
     // SENSORS AND FILTERS

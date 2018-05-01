@@ -5,6 +5,9 @@
 #include <Filter.h>
 #include <Loggable.h>
 
+/**
+ * This library uses accelerometer data provided by an inertial sensor to calculated the tilting angle of the sensor.
+ */
 class Filter_tiltingAngle: public Filter, public Loggable {
 ///////////////////////////////////////////////////////////////////////////
 // Loggable

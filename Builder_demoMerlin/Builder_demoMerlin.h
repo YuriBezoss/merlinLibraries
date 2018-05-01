@@ -9,7 +9,7 @@
 #include <Serial_basicCommunication.h>
 #include <Logger.h>
 #include <LoggingManager.h>
-#include <FiltersAndPipesManager.h>
+#include <PipelineManager.h>
 
 
 
@@ -48,7 +48,7 @@ protected:
     Scheduler *scheduler = nullptr;
 
     // filters and pipes
-    FiltersAndPipesManager *setupFiltersManager();
+    PipelineManager *setupFiltersManager();
 
 };
 

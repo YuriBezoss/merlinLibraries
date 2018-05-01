@@ -1,10 +1,10 @@
 #include <Logger.h>
 #include <cstdio>
-#include "FiltersAndPipesManager.h"
+#include "PipelineManager.h"
 
-void FiltersAndPipesManager::addFilter(uint16_t id, Filter *filter, bool ignoreInputItems) {
-    // show error if too many filters are added
-    if(id >= FILTERS_MAX){ Logger::hardFault("ERROR in FiltersAndPipesManager: Too many filters added. Increase FILTERS_MAX."); };
+void PipelineManager::addFilter(uint16_t id, Filter *filter, bool ignoreInputItems) {
+    // throw error if too many filters are added
+    if(id >= FILTERS_MAX){ Logger::hardFault("ERROR in PipelineManager: Too many filters added. Increase FILTERS_MAX."); };
 
     filterStructs[id].initialized = true;
     filterStructs[id].ignoreInputItems = ignoreInputItems;
@@ -15,9 +15,9 @@ void FiltersAndPipesManager::addFilter(uint16_t id, Filter *filter, bool ignoreI
 }
 
 
-void FiltersAndPipesManager::addPipe(uint16_t sourceFilterId, uint16_t sourceItemId, uint16_t targetFilterId, uint16_t targetItemId) {
-    // trap if there are too many inputs for an filter
-    if(targetItemId > PIPES_PER_FILER_MAX){ Logger::hardFault("ERROR in FiltersAndPipesManager: Too many pipes added. Increase PIPES_PER_FILER_MAX."); };
+void PipelineManager::addPipe(uint16_t sourceFilterId, uint16_t sourceItemId, uint16_t targetFilterId, uint16_t targetItemId) {
+    // throw error if there are too many inputs for an filter
+    if(targetItemId > PIPES_PER_FILER_MAX){ Logger::hardFault("ERROR in PipelineManager: Too many pipes added. Increase PIPES_PER_FILER_MAX."); };
 
     filterStructs[targetFilterId].incomingPipes[targetItemId].initialized = true;
     filterStructs[targetFilterId].incomingPipes[targetItemId].sourceFilterId = sourceFilterId;
@@ -25,7 +25,7 @@ void FiltersAndPipesManager::addPipe(uint16_t sourceFilterId, uint16_t sourceIte
 }
 
 
-void FiltersAndPipesManager::update(float deltaTime){
+void PipelineManager::update(float deltaTime){
 
     // loop over all filterStructs
     for (uint16_t i = 0; i < numFilters; ++i) {
@@ -43,7 +43,7 @@ void FiltersAndPipesManager::update(float deltaTime){
                 if (!incomingPipe.initialized) {
                     const char m[128] = "";
                     sprintf((char *) m,
-                            "ERROR in FiltersAndPipesManager: input pipe %d of filter %d has not been initialized.\n",
+                            "ERROR in PipelineManager: input pipe %d of filter %d has not been initialized.\n",
                             j, i);
                     Logger::hardFault(m);
                 }
@@ -52,7 +52,7 @@ void FiltersAndPipesManager::update(float deltaTime){
                 if (!filterStructs[incomingPipe.sourceFilterId].initialized) {
                     const char m[128] = "";
                     sprintf((char *) m,
-                            "ERROR in FiltersAndPipesManager: Item %d, which provides outputItem for filter %d, has not been initialized.\n",
+                            "ERROR in PipelineManager: Item %d, which provides outputItem for filter %d, has not been initialized.\n",
                             incomingPipe.sourceFilterId, i);
                     Logger::hardFault(m);
                 }
@@ -64,7 +64,7 @@ void FiltersAndPipesManager::update(float deltaTime){
                 if (!outputItem) {
                     const char m[128] = "";
                     sprintf((char *) m,
-                            "ERROR in FiltersAndPipesManager: Output filterItem, which is used as input %d of filter %d, is null. Check builder.\n",
+                            "ERROR in PipelineManager: Output filterItem, which is used as input %d of filter %d, is null. Check builder.\n",
                             j, i);
                     Logger::hardFault(m);
                 }
