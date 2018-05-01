@@ -5,6 +5,9 @@
 #include <Hardware_timer.h>
 #include <Logger.h>
 
+/**
+ * Timer provides the basic timer functions (e.g. getSystemTime, delayMillis) and a stopwatch.
+ */
 class Timer {
 
 public:
@@ -13,17 +16,19 @@ public:
 		Timer::hardwareTimer = hardwareTimer;
 	}
 
-    float getSystemTime();
-    uint32_t getSystemTimeUs();
+    float getSystemTime(); // return system time in s (time since MCU was started)
+    uint32_t getSystemTimeUs(); // return system time in us (time since MCU was started)
 
+	// pauses the code execution for the defined time
     void delaySeconds(float seconds);
     void delayMillis(uint32_t ms);
     void delayMicros(uint32_t us);
 
+	// stopwatch functions
     void startClock();
     float stopClock();
-    float getClockTime();
-    float getLastClockTimeAndRestartClock();
+    float getClockTime(); // returns the current clock time
+    float getLastClockTimeAndRestartClock(); // restart the clock and return that clock time which was also returned when getClockTime() was called the last time.
     bool isClockRunning();
     void resetClock();
 

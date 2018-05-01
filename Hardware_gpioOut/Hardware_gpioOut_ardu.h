@@ -24,4 +24,4 @@ public:
 };
 
 
-#endif //Hardware_gpioOut_ardu
+#endif //Hardware_gpioOut_ardu_H

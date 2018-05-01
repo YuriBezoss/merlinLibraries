@@ -15,7 +15,7 @@ public:
         return 115200;
     };
 
-    uint16_t available() override {
+    uint32_t available() override {
         return 0;
     };
 

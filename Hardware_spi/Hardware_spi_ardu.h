@@ -59,10 +59,10 @@ private:
 		digitalWrite(cs, state);
 	}
 
-	uint8_t cs = 10; // set cs pin
-	uint8_t clock = 14; // set clock pin
-	uint8_t mosi = 11; // Master out pin
-	uint8_t miso = 12; // Master in pin
+	uint8_t cs = 10; // cs pin
+	uint8_t clock = 14; // clock pin
+	uint8_t mosi = 11; // master out pin
+	uint8_t miso = 12; // master in pin
 
 	uint32_t baudrate = 1000000;
 };

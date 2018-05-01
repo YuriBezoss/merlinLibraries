@@ -4,34 +4,37 @@ void Hardware_inertialSensor_mpu6000_spi::init() {
 
     if(hardwareSpi) {
 
-        writeRegister(MPU6000_PWR_MGMT_1, 0x80); // chip reset entire device 0x80
-        timer->delayMillis(100); // Startup time delay
+        writeRegister(MPU6000_PWR_MGMT_1, 0x80); // chip reset
+        timer->delayMillis(100); // startup time delay
 
-        // Wake Up device and select GyroZ clock (better performance)
-        writeRegister(MPU6000_PWR_MGMT_1, MPU6000_CLKSEL_3);
 
-        writeRegister(MPU6000_USER_CTRL, I2C_IF_DIS);
+        writeRegister(MPU6000_PWR_MGMT_1, MPU6000_CLKSEL_3); // wake Up MPU and use GyroZ clock
+        writeRegister(MPU6000_USER_CTRL, MPU6000_I2C_IF_DIS); // disable I2C
+        writeRegister(MPU6000_PWR_MGMT_2, 0);
 
-        writeRegister(MPU6000_PWR_MGMT_2, 0); // only used for wake-up in accelerometer only low power mode
-
-        // SAMPLE RATE
-        if(dlpf == 0) { // Unterscheidung notwending, damit Sample Frequzenz immer 1 kHz bleibt. Wird fuer IMU-STM Kopplung benoetigt.
-            writeRegister(MPU6000_SMPLRT_DIV, 0x07); // Sample rate = 8000Hz  -> Fsample= 1Khz/(1+SMPLRT_DIV) = 1000Hz, if MPU6000_CONFIG = 0,7 Fsample= 8Khz/(1+SMPLRT_DIV) = 8000Hz
+        // Gyroscope Output Rate = 8kHz when the DLPF is disabled (targetLPF = 0 or 7), and 1kHz when the DLPF is enabled (see Register Map paage 12)
+        // This means if targetLPF == 0 -> Sample rate = 8 khz/(1+MPU6000_SMPLRT_DIV) and otherwise Sample rate = 1 khz/(1+MPU6000_SMPLRT_DIV)
+        // We want a sample rate of 1 kHz, so we have to set MPU6000_SMPLRT_DIV to 7 or 0 respectively.
+        if(targetLPF == 0) {
+            writeRegister(MPU6000_SMPLRT_DIV, 0x07);
         } else {
-            writeRegister(MPU6000_SMPLRT_DIV, 0x00); // Sample rate = 8000Hz  -> Fsample= 1Khz/(1+SMPLRT_DIV) = 1000Hz, if MPU6000_CONFIG = 0,7 Fsample= 8Khz/(1+SMPLRT_DIV) = 8000Hz
+            writeRegister(MPU6000_SMPLRT_DIV, 0x00);
         }
 
-        writeRegister(MPU6000_CONFIG, dlpf); // low pass filter
-        writeRegister(MPU6000_GYRO_CONFIG, gyroRange); //
-        writeRegister(MPU6000_ACCEL_CONFIG, accelRange);
+        writeRegister(MPU6000_CONFIG, targetLPF); // set low pass filter
+        usedLPF = readDLPF();
 
-        lpf = readDLPF();
+        writeRegister(MPU6000_GYRO_CONFIG, gyroRange); // set gyro range
         gyroScaling = readGyroScaling();
+
+        writeRegister(MPU6000_ACCEL_CONFIG, accelRange); // set accel range
         accelScaling = readAccelScaling();
     }
 }
 
-
+/**
+ * Reads the current accel, gyro and temp data
+ */
 void Hardware_inertialSensor_mpu6000_spi::update(){
 
     hardwareSpi->setBaudrate(SPI_BAUDRATE_SENSOR_REGISTERS);
@@ -39,29 +42,33 @@ void Hardware_inertialSensor_mpu6000_spi::update(){
     DataUnion data = DataUnion();
     readRegisters(MPU6000_ACCEL_XOUT_H, (uint8_t*) &data, sizeof(data));
 
-    uint8_t swap;
+    uint8_t temp;
 
-    swap = data.reg.accel_x_h; data.reg.accel_x_h = data.reg.accel_x_l; data.reg.accel_x_l = swap;
-    swap = data.reg.accel_y_h; data.reg.accel_y_h = data.reg.accel_y_l; data.reg.accel_y_l = swap;
-    swap = data.reg.accel_z_h; data.reg.accel_z_h = data.reg.accel_z_l; data.reg.accel_z_l = swap;
+    temp = data.reg.accel_x_h; data.reg.accel_x_h = data.reg.accel_x_l; data.reg.accel_x_l = temp;
+    temp = data.reg.accel_y_h; data.reg.accel_y_h = data.reg.accel_y_l; data.reg.accel_y_l = temp;
+    temp = data.reg.accel_z_h; data.reg.accel_z_h = data.reg.accel_z_l; data.reg.accel_z_l = temp;
 
-    swap = data.reg.gyro_x_h; data.reg.gyro_x_h = data.reg.gyro_x_l; data.reg.gyro_x_l = swap;
-    swap = data.reg.gyro_y_h; data.reg.gyro_y_h = data.reg.gyro_y_l; data.reg.gyro_y_l = swap;
-    swap = data.reg.gyro_z_h; data.reg.gyro_z_h = data.reg.gyro_z_l; data.reg.gyro_z_l = swap;
+    temp = data.reg.gyro_x_h; data.reg.gyro_x_h = data.reg.gyro_x_l; data.reg.gyro_x_l = temp;
+    temp = data.reg.gyro_y_h; data.reg.gyro_y_h = data.reg.gyro_y_l; data.reg.gyro_y_l = temp;
+    temp = data.reg.gyro_z_h; data.reg.gyro_z_h = data.reg.gyro_z_l; data.reg.gyro_z_l = temp;
 
-    swap = data.reg.temp_h; data.reg.temp_h = data.reg.temp_l; data.reg.temp_l = swap;
+    temp = data.reg.temperature_h; data.reg.temperature_h = data.reg.temperature_l; data.reg.temperature_l = temp;
 
     accelRaw = Vector3f(data.value.accel_x, data.value.accel_y, data.value.accel_z);
-    accel = accelRaw / accelScaling  * Math_basic::GRAVITY_CONSTANT / 1000.0f;; // in m/s^2 gebracht
+    accel = accelRaw / accelScaling  * Math_basic::GRAVITY_CONSTANT / 1000.0f; // in m/s^2
 
     gyroRaw = Vector3f(data.value.gyro_x, data.value.gyro_y, data.value.gyro_z);
     gyro = (gyroRaw/gyroScaling).toRad(); // in rad/s
 
-    tempRaw =  data.value.temp;
-    temp = tempRaw / 340.f + 36.5f;
+    temperatureRaw =  data.value.temperature;
+    temperature = temperatureRaw / 340.f + 36.5f; // in celsius
 
 }
 
+/**
+ * Reads the low pass filter cutoff-frequency that is used in the MPU
+ * @return low pass filter cut off frequency
+ */
 uint16_t Hardware_inertialSensor_mpu6000_spi::readDLPF(){
 
     hardwareSpi->setBaudrate(SPI_BAUDRATE_ALL_REGISTERS);
@@ -81,6 +88,10 @@ uint16_t Hardware_inertialSensor_mpu6000_spi::readDLPF(){
     }
 }
 
+/**
+ * Reads the gyro scaling factor that is used in the MPU
+ * @return gyro scaling factor
+ */
 float Hardware_inertialSensor_mpu6000_spi::readGyroScaling(){
 
     hardwareSpi->setBaudrate(SPI_BAUDRATE_ALL_REGISTERS);
@@ -97,7 +108,10 @@ float Hardware_inertialSensor_mpu6000_spi::readGyroScaling(){
     }
 }
 
-
+/**
+ * Reads the accel scaling factor that is used in the MPU
+ * @return accel scaling factor
+ */
 float Hardware_inertialSensor_mpu6000_spi::readAccelScaling(){
 
     hardwareSpi->setBaudrate(SPI_BAUDRATE_ALL_REGISTERS);
@@ -114,29 +128,40 @@ float Hardware_inertialSensor_mpu6000_spi::readAccelScaling(){
     }
 }
 
-
+/**
+ * Reads the n registers in the MPU6000 starting at the register address
+ * @param registerAddr register address
+ * @param data array that returns the register data that was read
+ * @param dataSize number of registers (n) that are read
+ */
 void Hardware_inertialSensor_mpu6000_spi::readRegisters(uint8_t registerAddr, uint8_t *data, uint8_t dataSize){
 
-    uint8_t msgSize = dataSize+(uint8_t)1;
+    uint8_t msgSize = dataSize+(uint8_t)1; // msgSize is the register address (1 byte) plus the length of the data array we expect.
 
-    uint8_t txMsg[msgSize];
-    uint8_t rxMsg[msgSize];
+    uint8_t txMsg[msgSize]; // data transmitted
+    uint8_t rxMsg[msgSize]; // data received
     for (int j = 0; j < msgSize; ++j) {
         txMsg[j] = 0;
         rxMsg[j] = 0;
     }
 
-    txMsg[0] = (uint8_t) (registerAddr | 0x80);
+    txMsg[0] = (uint8_t) (registerAddr | 0x80); // set the register address
 
     hardwareSpi->beginTransaction();
-    hardwareSpi->transfer(txMsg, rxMsg, msgSize); // write start address
+    hardwareSpi->transfer(txMsg, rxMsg, msgSize);
     hardwareSpi->endTransaction();
 
+    // write the received data to the data array
     for(uint8_t i = 0; i < dataSize; i++) {
         data[i] = rxMsg[i+1];
     }
 }
 
+/**
+ * Writes a single data byte to a register
+ * @param registerAddr
+ * @param dataByte
+ */
 void Hardware_inertialSensor_mpu6000_spi::writeRegister(uint8_t registerAddr, uint8_t dataByte){
     uint8_t txData[] = {registerAddr, dataByte};
     uint8_t rxData[] = {0,0};

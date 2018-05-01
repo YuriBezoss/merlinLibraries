@@ -4,6 +4,10 @@
 
 #include <stdint-gcc.h>
 
+/**
+ * Hardware usb serial interface
+ * For example, usb serial can be used to establish a serial communication between a computer and an arduino board via usb
+ */
 class Hardware_usbSerial {
 
 public:

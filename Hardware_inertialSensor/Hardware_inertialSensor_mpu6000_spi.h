@@ -5,27 +5,27 @@
 #include <Hardware_timer.h>
 #include <Hardware_inertialSensor.h>
 
-#define MPU6000_SMPLRT_DIV         0x19   // R/W
-#define MPU6000_CONFIG             0x1A   // R/W
-#define MPU6000_GYRO_CONFIG        0x1B   // R/W
-#define MPU6000_ACCEL_CONFIG       0x1C   // R/W
+#define MPU6000_SMPLRT_DIV   0x19
+#define MPU6000_CONFIG       0x1A
+#define MPU6000_GYRO_CONFIG  0x1B
+#define MPU6000_ACCEL_CONFIG 0x1C
 
-#define MPU6000_ACCEL_XOUT_H       0x3B   // R  
+#define MPU6000_ACCEL_XOUT_H 0x3B
 
-#define MPU6000_USER_CTRL          0x6A   // R/W
-#define MPU6000_PWR_MGMT_1         0x6B   // R/W
-#define MPU6000_PWR_MGMT_2         0x6C   // R/W
-#define MPU6000_CLKSEL_3 3
+#define MPU6000_USER_CTRL   0x6A
+#define MPU6000_PWR_MGMT_1  0x6B
+#define MPU6000_PWR_MGMT_2  0x6C
+#define MPU6000_CLKSEL_3    3
 
-#define I2C_IF_DIS 0x10
+#define MPU6000_I2C_IF_DIS  0x10
 
-#define MPU6000_DLPF_260HZ    0
-#define MPU6000_DLPF_184HZ    1
-#define MPU6000_DLPF_94HZ     2
-#define MPU6000_DLPF_44HZ     3
-#define MPU6000_DLPF_21HZ     4
-#define MPU6000_DLPF_10HZ     5
-#define MPU6000_DLPF_5HZ      6
+#define MPU6000_DLPF_260HZ  0
+#define MPU6000_DLPF_184HZ  1
+#define MPU6000_DLPF_94HZ   2
+#define MPU6000_DLPF_44HZ   3
+#define MPU6000_DLPF_21HZ   4
+#define MPU6000_DLPF_10HZ   5
+#define MPU6000_DLPF_5HZ    6
 
 #define MPU6000_FS_SEL_250  0
 #define MPU6000_FS_SEL_500  8
@@ -58,8 +58,8 @@ public:
     Vector3f getGyro() override { return gyro; };
     Vector3f getGyroRaw() override { return gyroRaw; };
 
-	float getTemp() override { return temp; };
-	float getTempRaw() override { return tempRaw; };
+	float getTemp() override { return temperature; };
+	float getTempRaw() override { return temperatureRaw; };
 
 protected:
 
@@ -82,8 +82,8 @@ protected:
 			uint8_t accel_y_l;
 			uint8_t accel_z_h;
 			uint8_t accel_z_l;
-			uint8_t temp_h;
-			uint8_t temp_l;
+			uint8_t temperature_h;
+			uint8_t temperature_l;
 			uint8_t gyro_x_h;
 			uint8_t gyro_x_l;
 			uint8_t gyro_y_h;
@@ -95,7 +95,7 @@ protected:
 			int16_t accel_x;
 			int16_t accel_y;
 			int16_t accel_z;
-			int16_t temp;
+			int16_t temperature;
 			int16_t gyro_x;
 			int16_t gyro_y;
 			int16_t gyro_z;
@@ -106,19 +106,19 @@ protected:
 	Hardware_spi *hardwareSpi = nullptr;
     Hardware_timer *timer = nullptr;
 
-	uint8_t dlpf = MPU6000_DLPF_44HZ;
-	uint8_t gyroRange = MPU6000_FS_SEL_2000;
-	uint8_t accelRange = MPU6000_AFS_SEL_4G;
+	uint8_t targetLPF = MPU6000_DLPF_44HZ; // low pass filter cutoff-frequency
+	uint8_t gyroRange = MPU6000_FS_SEL_2000; // gyro range in deg/s
+	uint8_t accelRange = MPU6000_AFS_SEL_4G; // accel range in g
 
-    Vector3f accel = Vector3f(0,0,0);
-    Vector3f gyro = Vector3f(0,0,0);
+    Vector3f accel = Vector3f(0,0,0); // in m/s^2
+    Vector3f gyro = Vector3f(0,0,0); // in rad/s
     Vector3f accelRaw = Vector3f(0,0,0);
     Vector3f gyroRaw = Vector3f(0,0,0);
 
-    float temp = 0;
-    float tempRaw = 0;
+    float temperature = 0; // in celsius
+    float temperatureRaw = 0;
 
-	float lpf = 0;
+	float usedLPF = 0;
     float gyroScaling = 0;
     float accelScaling = 0;
 

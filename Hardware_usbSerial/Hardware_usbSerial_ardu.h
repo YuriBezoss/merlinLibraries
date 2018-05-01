@@ -32,7 +32,7 @@ public:
         return baudRate;
     }
 
-    void setBaudrate(uint32_t baudRate) {
+    void setBaudrate(uint32_t baudRate) override {
         Hardware_usbSerial_ardu::baudRate = baudRate;
     }
 

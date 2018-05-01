@@ -3,10 +3,18 @@
 ///////////////////////////////////////////////////////////////////////////
 // timer
 ///////////////////////////////////////////////////////////////////////////
+/**
+ * return system time in s (time since MCU was started)
+ * @return system time in s
+ */
 float Timer::getSystemTime() {
     return hardwareTimer->getMicros()*1e-6f;
 }
 
+/**
+ * return system time in us (time since MCU was started)
+ * @return system time in us
+ */
 uint32_t Timer::getSystemTimeUs() {
     return hardwareTimer->getMicros();
 }
@@ -28,11 +36,18 @@ void Timer::delayMicros(uint32_t us) {
 ///////////////////////////////////////////////////////////////////////////
 // clock
 ///////////////////////////////////////////////////////////////////////////
+/**
+ * start stopwatch
+ */
 void Timer::startClock(){
     startTimeUs = hardwareTimer->getMicros();
     clockRunning = true;
 }
 
+/**
+ * stop stopwatch
+ * @return current clock time in s
+ */
 float Timer::stopClock(){
     if (!clockRunning) {
         return 0;
@@ -42,6 +57,9 @@ float Timer::stopClock(){
     return clockTime;
 }
 
+/**
+ * @return current clock time in s
+ */
 float Timer::getClockTime(){
     if (!clockRunning) {
         return 0;
@@ -51,6 +69,10 @@ float Timer::getClockTime(){
     return clockTime;
 }
 
+/**
+ * restart the clock
+ * @return clock time in s which was also returned when getClockTime() was called the last time
+ */
 float Timer::getLastClockTimeAndRestartClock(){
     if (!clockRunning) {
         return 0;
