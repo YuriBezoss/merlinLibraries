@@ -5,9 +5,12 @@
 #include <Hardware_timer.h>
 #include <Hardware_usbSerial.h>
 #include <Hardware_uart.h>
-#include <Math_vector3f.h>
+#include <Vector3f.h>
 
 
+/**
+ * Logger class is used to output data via uart or usbSerial
+ */
 class Logger {
 
 ///////////////////////////////////////////////////////////////////////////
@@ -33,12 +36,13 @@ public:
 
 
 protected:
-    static Hardware_timer *hardwareTimer; // static has to be defined in cpp-file
-    static Hardware_uart *uart; // static has to be defined in cpp-file
-    static Hardware_usbSerial *usbSerial; // static has to be defined in cpp-file
-    static Logger *instance; // static has to be defined in cpp-file
-    static bool started; // static has to be defined in cpp-file
-    static bool useUart; // static has to be defined in cpp-file
+    // static variables have to be declared in the cpp-file
+    static Hardware_timer *hardwareTimer;
+    static Hardware_uart *uart;
+    static Hardware_usbSerial *usbSerial;
+    static Logger *instance;
+    static bool started;
+    static bool useUart;
 
 ///////////////////////////////////////////////////////////////////////////
 // Basic printing functions
@@ -46,6 +50,7 @@ protected:
 public:
     void print(const char characters[]);
     void print(char character);
+    void print(bool     number);
     void print(int8_t   number);
     void print(uint8_t  number);
     void print(int16_t  number);
@@ -57,6 +62,7 @@ public:
 
     void println(const char characters[]);
     void println(char character);
+    void println(bool     number);
     void println(int8_t   number);
     void println(uint8_t  number);
     void println(int16_t  number);
@@ -102,6 +108,12 @@ public:
         return Logger::started;
     };
 
+    /**
+     * After logger is initialized for the first time, we can use this static function to print any information.
+     * For example, Logger::hardFault("test");
+     * hardFault will stop the programm and continuously print the char sequence
+     * @return an instance of the logger
+     */
     static void hardFault(const char *fault){
         if(Logger::started) {
             while(true) {
@@ -111,6 +123,11 @@ public:
         }
     };
 
+    /**
+     * After logger is initialized for the first time, we can use this static function to print any information.
+     * For example, Logger::debugger()->print("test");
+     * @return an instance of the logger
+     */
     static Logger *debugger(){
         if(Logger::started) {
             return instance;

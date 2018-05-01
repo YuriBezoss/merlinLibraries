@@ -4,16 +4,28 @@
 #include <stdint-gcc.h>
 #include <cstring>
 
+/**
+ * Median filter (see https://en.wikipedia.org/wiki/Median_filter)
+ */
 class Math_medianFilter {
 
 public:
 
+	/**
+	 * @param bufferLength length of the median filter
+	 * @param filterActive true if filter is active
+	 */
 	explicit Math_medianFilter(uint8_t bufferLength, bool filterActive) :
             sampleBuffer(new float[bufferLength]),
             bufferLength(bufferLength),
             filterActive(filterActive) {
     }
 
+	/**
+	 * applies the filter to the new sample value
+	 * @param sample new input value
+	 * @return new filtered value
+	 */
 	float applyFilter(float sample) {
 
         if(!filterActive) {

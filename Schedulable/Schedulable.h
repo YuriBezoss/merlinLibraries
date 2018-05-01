@@ -7,12 +7,12 @@ class Schedulable {
 public:
     virtual void update(float deltaTime) = 0;
 
-	uint8_t getExecutionPeriod() {
-		return executionPeriod;
+	uint8_t getSchedulingPeriod() {
+		return schedulingPeriod;
 	}
 
 protected:
-	uint8_t executionPeriod = 1;
+	uint8_t schedulingPeriod = 1;
 
 };
 

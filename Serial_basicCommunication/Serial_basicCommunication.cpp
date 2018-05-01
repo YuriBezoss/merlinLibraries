@@ -48,7 +48,7 @@ Serial_basicCommunication::Message Serial_basicCommunication::getMessage() {
 }
 
 void Serial_basicCommunication::sendMessage(Message newMessage) {
-    for (int i = 0; i < newMessage.msgLength; ++i) {
+    for (uint32_t i = 0; i < newMessage.msgLength; ++i) {
         if(useUart) {
             uart->write(newMessage.msg[i]);
         } else {

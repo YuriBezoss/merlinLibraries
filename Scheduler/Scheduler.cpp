@@ -29,7 +29,7 @@ void Scheduler::update(){
 
         for (uint16_t i = 0; i < numTasks; ++i) {
             taskCycleTimes[i] += deltaTime;
-            if(loopCounter % schedulables[i]->getExecutionPeriod() == 0){
+            if(loopCounter % schedulables[i]->getSchedulingPeriod() == 0){
                 runTask(i);
             }
         }

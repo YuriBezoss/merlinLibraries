@@ -11,8 +11,8 @@ class FiltersAndPipesManager: public Schedulable {
 ///////////////////////////////////////////////////////////////////////////
 public:
 
-    explicit FiltersAndPipesManager(uint8_t taskExecutionInterval) {
-        FiltersAndPipesManager::executionPeriod = taskExecutionInterval;
+    explicit FiltersAndPipesManager(uint8_t schedulingPeriod) {
+        FiltersAndPipesManager::schedulingPeriod = schedulingPeriod;
     }
 
     void addFilter(uint16_t id, Filter *filter, bool ignoreInputItems = false);

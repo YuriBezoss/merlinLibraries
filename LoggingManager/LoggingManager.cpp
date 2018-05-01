@@ -12,7 +12,7 @@ void LoggingManager::addLoggable(Loggable *loggable, bool showData){
 
 void LoggingManager::update(float deltaTime){
 
-    // print headers
+    // if the update function is called for the first time, we want to print the headers first
     if(!headersPrinted) {
         headersPrinted = true;
         for (uint8_t i = 0; i < numLoggables; ++i) {

@@ -69,7 +69,8 @@ float Math_basic::toDeg(float a) {
 // sqrt
 ////////////////////
 // checks input ranges and ensures valid value as output. If a negative number is given 0 is returned. The reasoning is
-// that a negative number for sqrt() is usually caused by small numerical rounding errors, and the real input should have been zero.
+// that a negative number for sqrt() is usually caused by small numerical rounding errors, and the real input should
+// have been zero.
 float Math_basic::sqrtSafe(float v) {
     float ret = sqrtf(v);
     if (isNan(ret)) { return 0; }

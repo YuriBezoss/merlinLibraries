@@ -3,10 +3,15 @@
 
 #include <stdint-gcc.h>
 
+/**
+ * Basic math functions, provides an abstract layer which helps to keep the code flexible and modular.
+ * Furthermore, some useful functions are added.
+ */
 namespace Math_basic{
 
+    // useful constants
     const static float PI_CONSTANT = 3.1415927f;
-    const static float GRAVITY_CONSTANT = 9.8066502f;
+    const static float GRAVITY_CONSTANT = 9.8066502f; // in m/s^2
     const static float SQRT_2 = 1.4142135f;
     const static float HALF_SQRT_2 = 0.7071067f;
 

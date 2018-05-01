@@ -3,7 +3,7 @@
 
 
 #include <stdint-gcc.h>
-#include <Math_vector3f.h>
+#include <Vector3f.h>
 
 /**
  * Interface for inertial sensors (accel and gyro sensors)

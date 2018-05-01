@@ -25,6 +25,10 @@ void Logger::print(char character) {
     write((uint8_t)character);
 }
 
+void Logger::print(bool number) {
+    print((uint32_t)number);
+}
+
 void Logger::print(int8_t number) {
     print((int32_t)number);
 }
@@ -138,6 +142,11 @@ void Logger::println(char character) {
     print(character);
     newLine();
 }
+
+void Logger::println(bool number) {
+    print((uint32_t)number);
+}
+
 
 void Logger::println(int8_t number) {
     print(number);
